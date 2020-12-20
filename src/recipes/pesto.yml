@@ -1,0 +1,28 @@
+title: Pesto
+default: "pine nut"
+variations:
+  "pine nut":
+    "combine and blend":
+      kitchenware: ["blender", "cheese grater"]
+      ingredients:
+        - measurement: 3
+          unit: cups
+          ingredient: fresh basil leaves
+          description: packed
+        - measurement: 4
+          unit: cloves
+          ingredient: garlic
+        - measurement: .75
+          unit: cups
+          ingredient: grated Parmesan cheese
+        - measurement: .5
+          unit: cups
+          ingredient: olive oil
+        - measurement: .25 
+          unit: cups
+          ingredient: pine nuts
+        - measurement: .5
+          unit: cups
+          ingredient: chopped fresh parsley
+          optional: true
+    done: {depends_on: ["combine and blend"]}
