@@ -13,6 +13,7 @@ variations:
         - measurement: .5
           unit: cups
           ingredient: dry lentils
+      kitchenware: [colander]
     "chop the carrots": &chop-carrots
       kitchenware: [knife, cutting board]
       details: Chop the carrots into rounds between .5cm thick and 1cm thick
@@ -66,7 +67,7 @@ variations:
     "simmer for up to an hour":
       details: "Simmer for up to an hour, stirring occasionally."
       depends_on: ["combine the ingredients in a large pot"]
-      kitchenware: ["stovetop"]
+      kitchenware: ["stovetop burner"]
       duration: { measurement: 1, unit: hour}
     done:
       depends_on: ["simmer for up to an hour"]

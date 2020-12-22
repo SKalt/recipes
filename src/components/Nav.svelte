@@ -8,6 +8,11 @@
     font-weight: 300;
     padding: 0 1em;
   }
+  @media (prefers-color-scheme: dark) {
+    nav {
+      border-bottom: 1px solid #eee;
+    }
+  }
 
   ul {
     margin: 0;

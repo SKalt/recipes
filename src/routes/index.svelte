@@ -16,7 +16,7 @@
 </svelte:head>
 <ul>
   {#each recipes as recipe}
-    <li><a href="./recipe/${recipe.slug}">{recipe.title}</a></li>
+    <li><a href="./recipe/{recipe.slug}">{recipe.title}</a></li>
   {/each}
 </ul>
 <!-- TODO: description -->

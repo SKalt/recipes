@@ -6,16 +6,19 @@
 
 <style>
   /* TODO: dark mode via a css variable + @media(prefers-color-scheme: dark) {} */
+  :global(body) {
+    background-color: white;
+    color: black;
+  }
   main {
     position: relative;
     max-width: 56em;
-    background-color: white;
     padding: 2em;
     margin: 0 auto;
     box-sizing: border-box;
   }
   @media (prefers-color-scheme: dark) {
-    main {
+    :global(body) {
       color: white;
       background-color: black;
     }
