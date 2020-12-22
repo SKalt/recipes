@@ -45,7 +45,7 @@ variations:
       depends_on: ["combine the ingredients in a bowl"]
     "let rise for 45 minutes":
       depends_on: ["knead the dough"]
-      duration: { unit: miunutes, measurement: 45, passive: true}
+      duration: { unit: miunutes, measurement: 45, passive: 45}
     "grease a breadpan":
       kitchenware: ['3"x9" breadpan']
     "place the dough in the breadpan": 
@@ -67,5 +67,5 @@ variations:
     "hit the start button":
       depends_on: ["combine ingredients in the bread machine"]
       details: start a rapid-rise white cycle on your bread machine.
-      duration: {measurement: 3.5, unit: hours, passive: true}
+      duration: {measurement: 3.5, unit: hours, passive: 3.5}
     done: { depends_on: ["hit the start button"]}

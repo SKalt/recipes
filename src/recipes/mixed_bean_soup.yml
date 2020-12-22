@@ -6,7 +6,7 @@ variations:
       details: |
         Combine 1 quart (4 cups) water and 2 cups of mixed beans in a 4-quart saucepan.
         Bring to a boil, boil for two minutes, then cover the pan, stop heating it, and let it soak for an hour. 
-      duration: {unit: hours, measurement: 1, passive: true}
+      duration: {unit: hours, measurement: 1, passive: .95}
       kitchenware: [4-quart saucepan]
       ingredients:
         - measurement: 1
@@ -59,6 +59,6 @@ variations:
         - measurement: 1
           unit: medium
           ingredient: bay leaf
-      duration: {measurement: 1.5, unit: hours, passive: true}
+      duration: {measurement: 1.5, unit: hours, passive: 1.5}
       depends_on: [simmer the vegetables, boil the beans]
     done: {depends_on: ["simmer the soup"]}
