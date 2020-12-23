@@ -3,85 +3,87 @@ title: Split pea soup
 default: "stovetop"
 variations:
   "stovetop":
-    "rinse the beans": &rinse-beans
-      details: Rinse the split peas and letils under running water unitl the water runs clear.
-      ingredients:
-        - measurement: 1.5
-          unit: cups
-          ingredient: dry split peas
-          description: at least half green split peas, at most half yellow split peas.
-        - measurement: .5
-          unit: cups
-          ingredient: dry lentils
-      kitchenware: [colander]
-    "chop the carrots": &chop-carrots
-      kitchenware: [knife, cutting board]
-      details: Chop the carrots into rounds between .5cm thick and 1cm thick
-      ingredients:
-        - measurement: 3
-          unit: medium
-          ingredient: carrots
-    "chop the celery": &chop-celery
-      kitchenware: [knife, cutting board]
-      details: Chop the celery widthwise into slices around .5 thick
-      ingredients:
-        - measurement: 3
-          unit: stalks
-          ingredient: celery
-    "dice the onion": &chop-onion
-      kitchenware: [knife, cutting board]
-      ingredients:
-        - measurement: 1
-          unit: medium
-          ingredient: onion
-    "mince the garlic": &chop-garlic
-      kitchenware: [knife, cutting board]
-      ingredients:
-        - measurement: 2
-          unit: medium cloves
-          ingredient: garlic 
-    "sautee the onion and garlic": &sautee
-      depends_on: ["mince the garlic", "dice the onion"]
-      kitchenware: [skillet] # maybe sub in the saucepan
-    "combine the ingredients in a large pot": &combine
-      depends_on: ["rinse the beans", "sautee the onion and garlic", "chop the carrots", "chop the celery"]
-      kitchenware: [] # ?
-      ingredients:
-        - measurement: 6
-          unit: cups
-          ingredient: water
-        - measurement: 2
-          unit: cubes
-          ingredient: chicken/turkey/vegetable bullion
-        - measurement: .25
-          unit: tsp
-          ingredient: thyme
-        - measurement: 1
-          unit: Tbsp
-          ingredient: parsley
-        - measurement: 1
-          unit: cup
-          ingredient: chopped cooked ham    
-          description: (smoked or unsmoked)
-          optional: true
-    "simmer for up to an hour":
-      details: "Simmer for up to an hour, stirring occasionally."
-      depends_on: ["combine the ingredients in a large pot"]
-      kitchenware: ["stovetop burner"]
-      duration: { measurement: 1, unit: hour}
-    done:
-      depends_on: ["simmer for up to an hour"]
+    steps:
+      "rinse the beans": &rinse-beans
+        details: Rinse the split peas and letils under running water unitl the water runs clear.
+        ingredients:
+          - measurement: 1.5
+            unit: cups
+            ingredient: dry split peas
+            description: at least half green split peas, at most half yellow split peas.
+          - measurement: .5
+            unit: cups
+            ingredient: dry lentils
+        kitchenware: [colander]
+      "chop the carrots": &chop-carrots
+        kitchenware: [knife, cutting board]
+        details: Chop the carrots into rounds between .5cm thick and 1cm thick
+        ingredients:
+          - measurement: 3
+            unit: medium
+            ingredient: carrots
+      "chop the celery": &chop-celery
+        kitchenware: [knife, cutting board]
+        details: Chop the celery widthwise into slices around .5 thick
+        ingredients:
+          - measurement: 3
+            unit: stalks
+            ingredient: celery
+      "dice the onion": &chop-onion
+        kitchenware: [knife, cutting board]
+        ingredients:
+          - measurement: 1
+            unit: medium
+            ingredient: onion
+      "mince the garlic": &chop-garlic
+        kitchenware: [knife, cutting board]
+        ingredients:
+          - measurement: 2
+            unit: medium cloves
+            ingredient: garlic 
+      "sautee the onion and garlic": &sautee
+        depends_on: ["mince the garlic", "dice the onion"]
+        kitchenware: [skillet] # maybe sub in the saucepan
+      "combine the ingredients in a large pot": &combine
+        depends_on: ["rinse the beans", "sautee the onion and garlic", "chop the carrots", "chop the celery"]
+        kitchenware: [] # ?
+        ingredients:
+          - measurement: 6
+            unit: cups
+            ingredient: water
+          - measurement: 2
+            unit: cubes
+            ingredient: chicken/turkey/vegetable bullion
+          - measurement: .25
+            unit: tsp
+            ingredient: thyme
+          - measurement: 1
+            unit: Tbsp
+            ingredient: parsley
+          - measurement: 1
+            unit: cup
+            ingredient: chopped cooked ham    
+            description: (smoked or unsmoked)
+            optional: true
+      "simmer for up to an hour":
+        details: "Simmer for up to an hour, stirring occasionally."
+        depends_on: ["combine the ingredients in a large pot"]
+        kitchenware: ["stovetop burner"]
+        duration: { measurement: 1, unit: hours}
+      done: {depends_on: ["simmer for up to an hour"]}
   "instant pot":
-    "rinse the beans": *rinse-beans
-    "chop the carrots": *chop-carrots
-    "chop the celery": *chop-celery
-    "dice the onion": *chop-onion
-    "mince the garlic": *chop-garlic
-    "sautee the onion and garlic":
-      <<: *sautee
-      kitchenware: ["instant pot"]
-    "combine the ingredients in the instant pot": *combine
-    "run the bean/chili program":
-      kitchenware: ["instant pot"]
-      depends_on: ["combine the ingredients in the instant pot"]
-    done: {depends_on: ["run the bean/chili program"]}
+    steps:
+      "rinse the beans": *rinse-beans
+      "chop the carrots": *chop-carrots
+      "chop the celery": *chop-celery
+      "dice the onion": *chop-onion
+      "mince the garlic": *chop-garlic
+      "sautee the onion and garlic":
+        <<: *sautee
+        kitchenware: ["instant pot"]
+      "combine the ingredients in the instant pot": *combine
+      "run the bean/chili program":
+        duration: {measurement: 45, unit: minutes, passive: 44}
+        kitchenware: ["instant pot"]
+        depends_on: ["combine the ingredients in the instant pot"]
+      done: {depends_on: ["run the bean/chili program"]}

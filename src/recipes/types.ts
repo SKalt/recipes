@@ -19,9 +19,12 @@ export interface IStep {
   kitchenware: Array<string>;
   duration: IDuration;
 }
-export interface IVariation {
+export interface ISteps {
   [instruction: string]: Partial<IStep>;
   done: IStep & { depends_on: string[] };
+}
+export interface IVariation {
+  steps: ISteps;
 }
 export interface IRecipe {
   title: string;
@@ -33,26 +36,49 @@ export interface IRecipe {
 export class Recipe {
   title: string;
   default: string;
-  variations: { [id: string]: Variation; done: Variation };
-  constructor(r: Partial<IRecipe>, defaultDuration: IDuration) {
+  variations: { [id: string]: Variation };
+  // TODO: deep clone?
+  validate(r: IRecipe) {
+    if (!r) throw new ValidationError([`entire recipe is undefined`]);
     const errors: string[] = [];
     if (!r.title) errors.push(`missing title`);
+    const result: { [key: string]: Variation } = {};
     const variations = Object.entries(r.variations || {});
     if (variations.length === 0) errors.push("no variations");
     else {
       if (variations.length === 1) this.default = variations[0][0];
       variations.forEach(([id, variation]) => {
         try {
-          this.variations[id] = new Variation(id, variation, defaultDuration);
+          result[id] = new Variation(id, variation, _defaultDuration);
         } catch (e) {
-          if (e instanceof ValidationError) {
-            errors.push(e.toString());
-          }
+          errors.push(e.toString());
         }
       });
     }
     if (errors.length)
-      throw new ValidationError(errors, r.title || "untitled recipe");
+      throw new ValidationError(errors, `recipe '${r?.title}'`);
+    return result;
+  }
+  constructor(
+    { title = "", default: dflt = "", variations = {} }: Partial<IRecipe> = {},
+    defaultDuration: IDuration = _defaultDuration,
+    validate: boolean = true
+  ) {
+    this.title = title;
+    this.default = dflt;
+    this.variations = {};
+    if (validate) {
+      this.variations = this.validate({ title, default: dflt, variations });
+    } else {
+      Object.entries(variations).forEach(([id, variant]) => {
+        this.variations[id] = new Variation(
+          id,
+          variant,
+          defaultDuration,
+          false
+        );
+      });
+    }
   }
 }
 
@@ -122,7 +148,7 @@ export class ValidationError extends Error {
   errors: string[];
   constructor(errors: string[], context = "") {
     super(
-      `found ${errors.length} errors${context ? `in ${context}` : ""}\n` +
+      `found ${errors.length} errors${context ? ` in ${context}` : ""}\n` +
         errors.map((err) => `  ${err}`).join("\n")
     );
   }
@@ -138,9 +164,9 @@ export class Ingredient implements IIngredient {
     if (!measurement) errors.push(`no measurement provided`);
     if (errors.length)
       throw new ValidationError(errors, "ingredient: " + ingredient);
-    this.ingredient = ingredient;
-    this.unit = unit;
-    this.measurement = measurement;
+    this.ingredient = ingredient || "";
+    this.unit = unit || "";
+    this.measurement = measurement || 0;
   }
 }
 export class Step implements IStep {
@@ -178,48 +204,106 @@ export class Step implements IStep {
   }
 }
 
-export class Variation implements IVariation {
-  // FIXME: ugly cloning, maybe split validation into separate fn
+class Steps implements ISteps {
+  [key: string]: Step;
   done: Step;
-  [id: string]: Step;
-  constructor(id: string, r: IVariation, defaultDuration: IDuration) {
-    const _defaultDuration = new Duration(defaultDuration);
+  constructor(steps: ISteps, defaultDuration: Duration) {
+    Object.entries(steps).forEach(([id, step]: [string, IStep]) => {
+      steps[id] = new Step(id, step, defaultDuration);
+    });
+  }
+}
+const _defaultDuration = new Duration({ measurement: 1, unit: "minutes" });
+const _defaultVariation: IVariation = {
+  steps: {
+    done: {
+      details: "",
+      kitchenware: [],
+      ingredients: [],
+      depends_on: [],
+      duration: _defaultDuration,
+    },
+  },
+};
+const walk = (steps: ISteps, cb: (id: string, s?: Partial<IStep>) => void) => {
+  const reached = new Set<string>();
+  let dependencies = ["done"];
+
+  while (dependencies.length > 0) {
+    const id = dependencies.pop();
+    if (!id) throw new Error(`unexpectedly lacking any dependencies`);
+    reached.add(id);
+    const step: Partial<IStep> | undefined = steps[id];
+    cb(id, step);
+    dependencies = dependencies.concat(
+      step.depends_on?.filter((id) => !reached.has(id)) || []
+    );
+  }
+};
+export class Variation implements IVariation {
+  id: string;
+  steps: Steps;
+  private readonly _defaultDuration: Duration;
+  validate(steps: ISteps) {
     const errors: string[] = [];
-    const allSteps = new Set(Object.keys(r));
+    const allSteps = new Set(Object.keys(steps));
     const reached = new Set();
-    Object.entries(r).forEach(([id, step]: [string, IStep]) => {
-      step.depends_on?.forEach((dep) => {
-        if (allSteps.has(id)) reached.add(id);
-        else {
-          errors.push(`unexpected step id '${dep}' in step ${id}`);
+    if (!allSteps.has("done"))
+      errors.push(`variant ${this.id} missing a 'done' step`);
+    walk(steps, (id, step) => {
+      if (!step) errors.push(`no step with id '${id}' in variant ${this.id}`);
+      else reached.add(id);
+      step?.depends_on?.forEach((dep) => {
+        if (!allSteps.has(dep)) {
+          errors.push(`unexpected step id '${dep}' in step '${id}'`);
         }
       });
       try {
-        this[id] = new Step(id, step, _defaultDuration);
+        new Step(id, step, this._defaultDuration);
       } catch (e) {
         errors.push(e.toString());
       }
     });
-    allSteps.forEach((step) => {
-      if (!reached.has(step)) errors.push(`failed to reach step ${step}`);
-    });
-    if (!allSteps.has("done"))
-      errors.push(`variant ${id} missing a 'done' step`);
-    if (errors.length != 0)
-      throw new ValidationError(errors, `recipe variant ${id}`);
+
+    [...allSteps]
+      .filter((id) => !reached.has(id))
+      .forEach((step) => errors.push(`failed to reach step '${step}'`));
+    if (errors.length != 0) {
+      throw new ValidationError(errors, `recipe variant '${this.id}'`);
+    }
+  }
+  clone(): Variation {
+    return new Variation(
+      this.id,
+      this, // providing {steps: this.steps}
+      this._defaultDuration,
+      false // don't re-validate
+    );
+  }
+  constructor(
+    id: string,
+    variation: IVariation = _defaultVariation,
+    defaultDuration: IDuration = _defaultDuration,
+    validate: boolean = true
+  ) {
+    this.id = id;
+    this._defaultDuration = new Duration(defaultDuration);
+    if (validate) this.validate(variation?.steps);
+    this.steps = new Steps(variation?.steps, this._defaultDuration);
   }
 }
-
-const cloneVariation = (v: Variation): Variation => {
-  return new Variation("cloned", v, { measurement: 1, unit: "minutes" });
+export const sfx = <T>(t: T, cb: (t: T) => void = console.log) => {
+  cb(t);
+  return t;
 };
-
-export const toInstrs = (steps: Variation, nCooks: number) => {
+export const toInstrs = (variation: Variation, nCooks: number) => {
+  const steps =
+    variation?.steps || new Steps(_defaultVariation.steps, _defaultDuration);
   const workers: Array<Array<Step>> = Array(nCooks)
     .fill(0)
     .map(() => []);
   // initialize
-  workers[0] = [steps.done];
+  workers[0] = [steps?.done];
   const remaining = new Set(Object.keys(steps));
   remaining.delete("done");
   const done = new Set("done");
@@ -231,12 +315,13 @@ export const toInstrs = (steps: Variation, nCooks: number) => {
       const bWaitTime = b.duration.passive;
       return aWaitTime < bWaitTime ? 1 : aWaitTime == bWaitTime ? 0 : -1;
     });
-  let candidates = sort(steps.done.depends_on.map((id) => steps[id]));
-  // the Variant parser guarantees that this will terminate
+  let candidates = sort(steps.done?.depends_on?.map((id) => steps[id]) || []);
+  // the Variation parser guarantees that this will terminate
   while (candidates.length) {
     workers.forEach((worker) => {
       candidates = sort(candidates);
       const accepted = candidates.shift();
+      if (!accepted) return; // the other worker may have consumed the last task
       done.add(accepted.id);
       remaining.delete(accepted.id);
       worker.push(accepted);
@@ -249,10 +334,11 @@ export const toInstrs = (steps: Variation, nCooks: number) => {
 };
 
 interface ITimelineStep {
-  id: string; // references the step Variation[id]
+  id: string; // references the step Varation.Steps[id]
   start: number; // milliseconds since start
   end: number; // milliseconds since start
 }
+
 interface ITimeline {
   // for multiple workers
   steps: ITimelineStep[];
@@ -303,8 +389,9 @@ class Timeline implements ITimeline {
     while (workers.length > 0) {
       workers.forEach((queue) => {
         const step = queue.shift();
+        if (!step) throw new Error(`unexpectedly lacking a step`);
         step.start = Math.max(
-          time.get(queue),
+          time.get(queue) || 0,
           ...step.depends_on.map((id) => (steps[id].end || 0) + pause)
         );
         step.end = step.end = step.start + step.duration._ms;

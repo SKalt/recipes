@@ -2,63 +2,64 @@ title: "Mixed bean soup"
 default: "stovetop"
 variations:
   "stovetop":
-    "boil the beans":
-      details: |
-        Combine 1 quart (4 cups) water and 2 cups of mixed beans in a 4-quart saucepan.
-        Bring to a boil, boil for two minutes, then cover the pan, stop heating it, and let it soak for an hour. 
-      duration: {unit: hours, measurement: 1, passive: .95}
-      kitchenware: [4-quart saucepan]
-      ingredients:
+    steps:
+      "boil the beans":
+        details: |
+          Combine 1 quart (4 cups) water and 2 cups of mixed beans in a 4-quart saucepan.
+          Bring to a boil, boil for two minutes, then cover the pan, stop heating it, and let it soak for an hour. 
+        duration: {unit: hours, measurement: 1, passive: .95}
+        kitchenware: [4-quart saucepan]
+        ingredients:
+          - measurement: 1
+            unit: quart
+            ingredient: water
+          - measurement: 2
+            unit: cups
+            ingredient: mixed beans
+      "drain the beans":
+        details: |
+          Drain the beans into the colander and wash the pan.
+        kitchenware: [1-quart collander]
+        depends_on: [boil the beans]
+      "chop the bacon":
+        ingredients:
+          - ingredient: sliced bacon
+            unit: pounds
+            measurement: .25
+        details: |
+          Chop the bacon into manageable lengths.
+          If you don't know what a manageable length is, a ruler won't help you.
+          Just think "bite-sized" and go smaller than that.
+        kitchenware: [knife, cutting board]
+      "fry the bacon":
+        details: Fry the .25 pounds of bacon in the saucepan.
+        kitchenware: [4-quart saucepan]
+        ingredients:
+          - measurement: .25
+            unit: pounds
+            ingredient: bacon
+        depends_on: [drain the beans, chop the bacon]
+      "chop the carrot and garlic":
+        details: Peel and chop 1 large carrot and 1 clove garlic.
+        ingredients:
         - measurement: 1
-          unit: quart
-          ingredient: water
-        - measurement: 2
-          unit: cups
-          ingredient: mixed beans
-    "drain the beans":
-      details: |
-        Drain the beans into the colander and wash the pan.
-      kitchenware: [1-quart collander]
-      depends_on: [boil the beans]
-    "chop the bacon":
-      ingredients:
-        - ingredient: sliced bacon
-          unit: pounds
-          measurement: .25
-      details: |
-        Chop the bacon into manageable lengths.
-        If you don't know what a manageable length is, a ruler won't help you.
-        Just think "bite-sized" and go smaller than that.
-      kitchenware: [knife, cutting board]
-    "fry the bacon":
-      details: Fry the .25 pounds of bacon in the saucepan.
-      kitchenware: [4-quart saucepan]
-      ingredients:
-        - measurement: .25
-          unit: pounds
-          ingredient: bacon
-      depends_on: [drain the beans, chop the bacon]
-    "chop the carrot and garlic":
-      details: Peel and chop 1 large carrot and 1 clove garlic.
-      ingredients:
-      - measurement: 1
-        unit: large
-        ingredient: carrot
-      - measurement: 1
-        unit: medium-large
-        ingredient: clove of garlic
-      kitchenware: [knife, cutting board]
-    "simmer the vegetables":
-      details: Discard all but 2 tablespoons of bacon fat, then add the copped garlic and carrot and cook over medium heat until the vegetables are soft.
-      depends_on: [chop the carrot and garlic, fry the bacon]
-    "simmer the soup":
-      details: |
-        Add 6 cups water, 1 bay leaf, and the drained bean mixture.
-        Cover the saucepan and simmer on low heat for 1.5 hours.
-      ingredients:
+          unit: large
+          ingredient: carrot
         - measurement: 1
-          unit: medium
-          ingredient: bay leaf
-      duration: {measurement: 1.5, unit: hours, passive: 1.5}
-      depends_on: [simmer the vegetables, boil the beans]
-    done: {depends_on: ["simmer the soup"]}
+          unit: medium-large
+          ingredient: clove of garlic
+        kitchenware: [knife, cutting board]
+      "simmer the vegetables":
+        details: Discard all but 2 tablespoons of bacon fat, then add the copped garlic and carrot and cook over medium heat until the vegetables are soft.
+        depends_on: [chop the carrot and garlic, fry the bacon]
+      "simmer the soup":
+        details: |
+          Add 6 cups water, 1 bay leaf, and the drained bean mixture.
+          Cover the saucepan and simmer on low heat for 1.5 hours.
+        ingredients:
+          - measurement: 1
+            unit: medium
+            ingredient: bay leaf
+        duration: {measurement: 1.5, unit: hours, passive: 1.5}
+        depends_on: [simmer the vegetables, boil the beans]
+      done: {depends_on: ["simmer the soup"]}

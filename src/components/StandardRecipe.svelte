@@ -1,116 +1,70 @@
 <script lang="ts">
-  import { Duration, IRecipe } from "../recipes/types";
-  import { Recipe, Step, Variation, Ingredient } from "../recipes/types";
+  import type { IRecipe } from "../recipes/types";
+  import {
+    Recipe,
+    Step,
+    Duration,
+    Variation,
+    Ingredient,
+    toInstrs,
+    sfx,
+  } from "../recipes/types";
   import { split } from "../lib/utils";
-  import { worker } from "cluster";
   export let recipe: IRecipe;
   let _recipe: Recipe;
+  let variation: string;
+  let variant: Variation;
+  export let nCooks = 1;
+  export let player = nCooks - 1;
+  let workers: Step[][] = [];
+  let ingredients: Array<Ingredient> = [];
+  let workeQueue: Step[];
+  let kitchenware: Array<string>;
   $: _recipe = new Recipe(
     recipe,
     new Duration({ measurement: 1, unit: "minutes" })
   );
-  let variation = _recipe.default;
-  let variant: Variation = _recipe.variations[variation];
-  $: variant = _recipe.variations[variation];
-  export let nCooks = 1;
-  export let player = nCooks - 1;
-  // const toInstructionsForOneWorker = (
-  //   variant: Variation
-  // ): Array<Step & { id: string }> => {
-  //   let workeQueue: Array<Step & { id: string }> = [
-  //     { id: "done", ...variant.done },
-  //   ];
-  //   const recur = (s: Step) => {
-  //     const [passive, active] = split(
-  //       s?.depends_on || [],
-  //       (id) => variant[id]?.duration?.passive != 0
-  //     );
-  //     const addPreviousSteps = (dep: string) => {
-  //       const step = variant[dep];
-  //       if (workeQueue.map((step) => step.id).includes(dep)) return;
-  //       if (!step) {
-  //         throw new Error(
-  //           `missing '${dep}' from ${Object.keys(variant)
-  //             .map((id) => `'${id}'`)
-  //             .join()}`
-  //         );
-  //       }
-  //       workeQueue.unshift({ ...step, id: dep });
-  //       recur(step);
-  //     };
-  //     active.forEach(addPreviousSteps);
-  //     passive.forEach(addPreviousSteps);
-  //   };
-  //   recur(variant.done);
-  //   Object.keys(variant).forEach((id) => {
-  //     if (!workeQueue.find((step) => step.id === id)) {
-  //       throw new Error(
-  //         `step '${id}' not found in ${workeQueue
-  //           .map((s) => `'${s.id}'`)
-  //           .join(",\n")}`
-  //       );
-  //     }
-  //   });
-  //   return workeQueue;
-  // };
-
-  // The Algorithm
-  const toInstrs = (steps: Variation, nCooks: number) => {
-    const workers: Array<Array<Step>> = Array(nCooks)
-      .fill(0)
-      .map(() => []);
-    // initialize
-    workers[0] = [steps.done];
-    const remaining = new Set(Object.keys(steps));
-    remaining.delete("done");
-    const done = new Set("done");
-    // candidate next steps, sorted from least downtime to most
-
-    const sort = (steps: Step[]) =>
-      steps.sort((a, b) => {
-        const aWaitTime = a.duration.passive;
-        const bWaitTime = b.duration.passive;
-        return aWaitTime < bWaitTime ? 1 : aWaitTime == bWaitTime ? 0 : -1;
-      });
-    let candidates = sort(steps.done.depends_on.map((id) => steps[id]));
-    // the Variant parser guarantees that this will terminate
-    while (candidates.length) {
-      workers.forEach((worker) => {
-        candidates = sort(candidates);
-        const accepted = candidates.shift();
-        done.add(accepted.id);
-        remaining.delete(accepted.id);
-        worker.push(accepted);
-        candidates = candidates.concat(
-          accepted.depends_on
-            .filter((id) => !done.has(id))
-            .map((id) => steps[id])
-        );
-      });
-    }
-    return workers;
-  };
-  let workers = toInstrs(variant, nCooks);
-  let ingredients: Array<Ingredient> = [];
-  let workeQueue = workers[player];
-  let kitchenware: Array<string>;
+  $: console.log({
+    recipe,
+    _recipe,
+    variation,
+    variant,
+    nCooks,
+    player,
+    workers,
+    ingredients,
+    workeQueue,
+    kitchenware,
+  });
   // TODO: timeline
+
+  $: variant = _recipe.variations[variation];
   $: workers = toInstrs(variant, nCooks);
   $: ingredients = workers
     .reduce((a, r) => a.concat(r), [])
-    .map((step) => step.ingredients)
+    .filter(Boolean)
+    .map((i) => sfx(i, (step) => console.log({ step: step })))
+    .map((step) => step?.ingredients)
     .reduce((a, r) => a.concat(r), []);
-  $: workeQueue = workers[player];
-  $: ingredients = workeQueue.reduce((a, step) => {
-    return [...a, ...(step.ingredients || [])];
-  }, []);
-  $: kitchenware = workeQueue.reduce(
-    (a, r) => [
-      ...a,
-      ...(r.kitchenware?.filter((item) => !a.includes(item)) || []),
-    ],
-    []
-  );
+  $: {
+    workeQueue = workers[player] || [];
+    console.log({ workeQueue, workers, player });
+  }
+  $: ingredients = workeQueue
+    .filter(Boolean)
+    .map((i) => sfx(i, (i) => console.log({ i })))
+    .reduce((a, step) => {
+      return [...a, ...(step.ingredients || [])];
+    }, []);
+  $: kitchenware = workeQueue
+    .filter(Boolean)
+    .reduce(
+      (acc: string[], red) => [
+        ...acc,
+        ...(red.kitchenware?.filter((item) => !acc.includes(item)) || []),
+      ],
+      []
+    );
   // TODO: add a measurement step for each ingredient
   // TODO: add a cleanup step for each ingredient and item of kitchenware
   // TODO: ensure no item of kitchenware is being used by more than one worker at a time
@@ -167,9 +121,9 @@
   <div>
     <h2>Instructions</h2>
     <ol>
-      {#each workeQueue as step}
+      {#each workeQueue.filter(Boolean) as step}
         <li>
-          {(step.details || step.id)
+          {(step?.details || step?.id || '')
             .replace(/\s*\.?$/, '.')
             .replace(/[.]{2}$/, '.')}
         </li>

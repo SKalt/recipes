@@ -2,74 +2,75 @@ title: Home fries
 default: default
 variations:
   default:
-    "cube the potatoes":
-      duration: {measurement: 8, unit: minutes}
-      details: |
-          Scrub the potatoes, then cut the potatoes into half-inch cubes.
-          Place the cubed potatoes into a large saucepan.
-          Cover the cubed potatoes with 1 inch of water.
-      ingredients:
-        - ingredient: russet potatoes
-          unit: medium
-          measurement: 3
-      kitchenware: [knife, cutting board, large pot]
-    "parboil the potatoes":
-      details: |
-        Place the pot on medium heat and bring to a boil.
-        Boil for 3 additional minutes.
-      duration: {measurement: 8, unit: minutes, passive: 6}
-      depends_on: ["cube the potatoes"]
-      kitchenware: [stove, large pot]
-    "dice the onion":
-      details: dice the onion. 
-      duration: {measurement: 3, unit: minutes }
-      ingredients:
-        - measurement: 1
-          unit: medium
-          ingredient: onion
-      kitchenware: [knife, cutting board]
-    "carmelize the onions":
-      duration: {unit: minutes, measurement: 5}
-      details: |
-        Heat some oil in a skillet.
-        Fry the onions in the skillet on high or medium heat until they're carmelized.
-      kitchenware: [skillet]
-      ingredients:
-        - measurement: 1
-          unit: Tbsp
-          ingredient: olive oil or butter
-      depends_on: ["dice the onion"]
-    "mince the garlic":
-      duration: {unit: minutes, measurement: 2}
-      kitchenware: [knife, cutting board]
-      ingredients: 
-        - ingredient: garlic
-          unit: medium-sized cloves
-          measurement: 2
-    "cook the garlic":
-      duration: {unit: minutes, measurement: 1}
-      depends_on: ["mince the garlic", "carmelize the onions"]
-    "drain the potatoes":
-      details: Drain the potatoes into a colander.
-      kitchenware: [colander]
-      depends_on: [parboil the potatoes]
-    "fry the potatoes":
-      duration: {measurement: 20, unit: minutes}
-      details: |
-        Heat a generous amount of butter on a skillet.
-        Arrange a layer of parboild potato-cubes so that they have some room between them.
-        Walk the fine, fine line of not letting the potatoes stick and not jostling the potatoes until they disintegrate.
-        Flip or stir to ensure that the cubed potatoes are browned on as many sides as possible.
-      kitchenware: [skillet]
-      depends_on: ["drain the potatoes"]
-    "combine with spices":
-      duration: {measurement: 1, unit: minutes}
-      details: |
-        Combine the fried potatoes and carmelized onions in a large bowl.
-        Toss with 2 Tbsp paprika.
-      ingredients:
-        - measurement: 2
-          ingredient: paprika
-          unit: Tbsp
-      depends_on: ["fry the potatoes", "carmelize the onions", "cook the garlic"]
-    done: {depends_on: ["combine with spices"]}
+    steps:
+      "cube the potatoes":
+        duration: {measurement: 8, unit: minutes}
+        details: |
+            Scrub the potatoes, then cut the potatoes into half-inch cubes.
+            Place the cubed potatoes into a large saucepan.
+            Cover the cubed potatoes with 1 inch of water.
+        ingredients:
+          - ingredient: russet potatoes
+            unit: medium
+            measurement: 3
+        kitchenware: [knife, cutting board, large pot]
+      "parboil the potatoes":
+        details: |
+          Place the pot on medium heat and bring to a boil.
+          Boil for 3 additional minutes.
+        duration: {measurement: 8, unit: minutes, passive: 6}
+        depends_on: ["cube the potatoes"]
+        kitchenware: [stove, large pot]
+      "dice the onion":
+        details: dice the onion. 
+        duration: {measurement: 3, unit: minutes }
+        ingredients:
+          - measurement: 1
+            unit: medium
+            ingredient: onion
+        kitchenware: [knife, cutting board]
+      "carmelize the onions":
+        duration: {unit: minutes, measurement: 5}
+        details: |
+          Heat some oil in a skillet.
+          Fry the onions in the skillet on high or medium heat until they're carmelized.
+        kitchenware: [skillet]
+        ingredients:
+          - measurement: 1
+            unit: Tbsp
+            ingredient: olive oil or butter
+        depends_on: ["dice the onion"]
+      "mince the garlic":
+        duration: {unit: minutes, measurement: 2}
+        kitchenware: [knife, cutting board]
+        ingredients: 
+          - ingredient: garlic
+            unit: medium-sized cloves
+            measurement: 2
+      "cook the garlic":
+        duration: {unit: minutes, measurement: 1}
+        depends_on: ["mince the garlic", "carmelize the onions"]
+      "drain the potatoes":
+        details: Drain the potatoes into a colander.
+        kitchenware: [colander]
+        depends_on: [parboil the potatoes]
+      "fry the potatoes":
+        duration: {measurement: 20, unit: minutes}
+        details: |
+          Heat a generous amount of butter on a skillet.
+          Arrange a layer of parboild potato-cubes so that they have some room between them.
+          Walk the fine, fine line of not letting the potatoes stick and not jostling the potatoes until they disintegrate.
+          Flip or stir to ensure that the cubed potatoes are browned on as many sides as possible.
+        kitchenware: [skillet]
+        depends_on: ["drain the potatoes"]
+      "combine with spices":
+        duration: {measurement: 1, unit: minutes}
+        details: |
+          Combine the fried potatoes and carmelized onions in a large bowl.
+          Toss with 2 Tbsp paprika.
+        ingredients:
+          - measurement: 2
+            ingredient: paprika
+            unit: Tbsp
+        depends_on: ["fry the potatoes", "carmelize the onions", "cook the garlic"]
+      done: {depends_on: ["combine with spices"]}

@@ -2,70 +2,71 @@ title: yogurt bread
 default: "manual"
 variations:
   "manual":
-    "heat water": &heat-water
-      details: |
-        Heat 1 cup of warm water.
-        It should be as hot as possible without being painful to the touch. 
-      ingredients:
-        - unit: cups
-          measurement: 1
-          ingredient: warm water
-    "cultivate the yeast": &cultivate-yeast
-      depends_on: [heat water]
-      details: |
-        Pour the dry yeast into the warm water, then pour the sugar over it.
-        Wait until the yeast begins to foam, then give stir the mixture.
-        Wait for a centimeter of foam to form.
-      ingredients:
-        - measurement: 1
-          unit: Tbsp
-          ingredient: sugar
-          description: it's fine to increase the ratio of sugar to yeast from 1 Tsb/1 tsp to 1.5 Tbsp/1
-        - measurement: 1
-          unit: tsp
-          ingredient: active dry yeast
-    "combine the ingredients in a bowl": &combine-ingredients
-      depends_on: [cultivate the yeast]
-      details: Mix all the ingredients in a large bowl.
-      kitchenware: [large bowl]
-      ingredients:
-        - measurement: .5
-          unit: cups
-          ingredient: yogurt
-          # description: greek or normal yogurt both work, so long as it's whole milk.
-        - measurement: 3
-          unit: cups
-          ingredient: bread flour
-          description: You can substitute 2 cups whole-wheat flour and 1 cup bread flour or 3 cups all-purpose flour.
-        - measurement: 1
-          unit: tsp
-          ingredient: salt
-          description: preferably non-iodized for the yeast's comfort
-    "knead the dough":
-      depends_on: ["combine the ingredients in a bowl"]
-    "let rise for 45 minutes":
-      depends_on: ["knead the dough"]
-      duration: { unit: miunutes, measurement: 45, passive: 45}
-    "grease a breadpan":
-      kitchenware: ['3"x9" breadpan']
-    "place the dough in the breadpan": 
-      depends_on: ["grease a breadpan", "let rise for 45 minutes"]
-    "preheat the oven to 350F":
-      kitchenware: [oven]
-    "bake at 350F for 40 minutes":
-      depends_on: ["place the dough in the breadpan", "preheat the oven to 350F"]
-    done:
-      depends_on: ["bake at 350F for 40 minutes"] 
+    steps:
+      "heat water": &heat-water
+        details: |
+          Heat 1 cup of warm water.
+          It should be as hot as possible without being painful to the touch. 
+        ingredients:
+          - unit: cups
+            measurement: 1
+            ingredient: warm water
+      "cultivate the yeast": &cultivate-yeast
+        depends_on: [heat water]
+        details: |
+          Pour the dry yeast into the warm water, then pour the sugar over it.
+          Wait until the yeast begins to foam, then give stir the mixture.
+          Wait for a centimeter of foam to form.
+        ingredients:
+          - measurement: 1
+            unit: Tbsp
+            ingredient: sugar
+            description: it's fine to increase the ratio of sugar to yeast from 1 Tsb/1 tsp to 1.5 Tbsp/1
+          - measurement: 1
+            unit: tsp
+            ingredient: active dry yeast
+      "combine the ingredients in a bowl": &combine-ingredients
+        depends_on: [cultivate the yeast]
+        details: Mix all the ingredients in a large bowl.
+        kitchenware: [large bowl]
+        ingredients:
+          - measurement: .5
+            unit: cups
+            ingredient: yogurt
+            # description: greek or normal yogurt both work, so long as it's whole milk.
+          - measurement: 3
+            unit: cups
+            ingredient: bread flour
+            description: You can substitute 2 cups whole-wheat flour and 1 cup bread flour or 3 cups all-purpose flour.
+          - measurement: 1
+            unit: tsp
+            ingredient: salt
+            description: preferably non-iodized for the yeast's comfort
+      "knead the dough":
+        depends_on: ["combine the ingredients in a bowl"]
+      "let rise for 45 minutes":
+        depends_on: ["knead the dough"]
+        duration: { unit: miunutes, measurement: 45, passive: 45}
+      "grease a breadpan":
+        kitchenware: ['3"x9" breadpan']
+      "place the dough in the breadpan": 
+        depends_on: ["grease a breadpan", "let rise for 45 minutes"]
+      "preheat the oven to 350F":
+        kitchenware: [oven]
+      "bake at 350F for 40 minutes":
+        depends_on: ["place the dough in the breadpan", "preheat the oven to 350F"]
+      done: {depends_on: ["bake at 350F for 40 minutes"]}
   "with a bread machine":
-    "heat water": *heat-water
-    "cultivate the yeast": *cultivate-yeast
-    "combine ingredients in the bread machine":
-      <<: *combine-ingredients
-      details:  |
-        Combine all the ingredeints in the bread machine.
-        First add the yogurt and yeast, then sift in the flour, then add the salt.
-    "hit the start button":
-      depends_on: ["combine ingredients in the bread machine"]
-      details: start a rapid-rise white cycle on your bread machine.
-      duration: {measurement: 3.5, unit: hours, passive: 3.5}
-    done: { depends_on: ["hit the start button"]}
+    steps:
+      "heat water": *heat-water
+      "cultivate the yeast": *cultivate-yeast
+      "combine ingredients in the bread machine":
+        <<: *combine-ingredients
+        details:  |
+          Combine all the ingredeints in the bread machine.
+          First add the yogurt and yeast, then sift in the flour, then add the salt.
+      "hit the start button":
+        depends_on: ["combine ingredients in the bread machine"]
+        details: start a rapid-rise white cycle on your bread machine.
+        duration: {measurement: 3.5, unit: hours, passive: 3.5}
+      done: {depends_on: ["hit the start button"]}
