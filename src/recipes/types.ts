@@ -209,7 +209,7 @@ class Steps implements ISteps {
   done: Step;
   constructor(steps: ISteps, defaultDuration: Duration) {
     Object.entries(steps).forEach(([id, step]: [string, IStep]) => {
-      steps[id] = new Step(id, step, defaultDuration);
+      this[id] = new Step(id, step, defaultDuration);
     });
   }
 }

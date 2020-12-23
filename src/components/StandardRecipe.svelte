@@ -20,42 +20,28 @@
   let ingredients: Array<Ingredient> = [];
   let workeQueue: Step[];
   let kitchenware: Array<string>;
-  $: _recipe = new Recipe(
-    recipe,
-    new Duration({ measurement: 1, unit: "minutes" })
-  );
-  $: console.log({
-    recipe,
-    _recipe,
-    variation,
-    variant,
-    nCooks,
-    player,
-    workers,
-    ingredients,
-    workeQueue,
-    kitchenware,
-  });
+  $: {
+    _recipe = new Recipe(
+      recipe,
+      new Duration({ measurement: 1, unit: "minutes" })
+    );
+    variation = _recipe.default;
+    variant = _recipe.variations[variation];
+  }
   // TODO: timeline
 
-  $: variant = _recipe.variations[variation];
   $: workers = toInstrs(variant, nCooks);
   $: ingredients = workers
     .reduce((a, r) => a.concat(r), [])
     .filter(Boolean)
-    .map((i) => sfx(i, (step) => console.log({ step: step })))
     .map((step) => step?.ingredients)
     .reduce((a, r) => a.concat(r), []);
   $: {
     workeQueue = workers[player] || [];
-    console.log({ workeQueue, workers, player });
   }
-  $: ingredients = workeQueue
-    .filter(Boolean)
-    .map((i) => sfx(i, (i) => console.log({ i })))
-    .reduce((a, step) => {
-      return [...a, ...(step.ingredients || [])];
-    }, []);
+  $: ingredients = workeQueue.filter(Boolean).reduce((a, step) => {
+    return [...a, ...(step.ingredients || [])];
+  }, []);
   $: kitchenware = workeQueue
     .filter(Boolean)
     .reduce(
