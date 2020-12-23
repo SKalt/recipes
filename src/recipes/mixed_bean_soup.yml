@@ -1,6 +1,7 @@
 title: "Mixed bean soup"
 default: "stovetop"
 variations:
+  # TODO: instant pot
   "stovetop":
     steps:
       "boil the beans":

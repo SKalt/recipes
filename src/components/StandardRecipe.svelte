@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TimelineDag from "./TimelineDag.svelte";
   import type { IRecipe } from "../recipes/types";
   import {
     Recipe,
@@ -7,9 +8,9 @@
     Variation,
     Ingredient,
     toInstrs,
+    Timeline,
     sfx,
   } from "../recipes/types";
-  import { split } from "../lib/utils";
   export let recipe: IRecipe;
   let _recipe: Recipe;
   let variation: string;
@@ -20,6 +21,7 @@
   let ingredients: Array<Ingredient> = [];
   let workeQueue: Step[];
   let kitchenware: Array<string>;
+  let timeline: Timeline;
   $: {
     _recipe = new Recipe(
       recipe,
@@ -28,9 +30,12 @@
     if (!variation) variation = _recipe.default;
   }
   $: variant = _recipe.variations[variation];
-  // TODO: timeline
 
   $: workers = toInstrs(variant, nCooks);
+  $: {
+    timeline = new Timeline(variant, workers);
+    console.log(timeline, workers);
+  }
   $: ingredients = workers
     .reduce((a, r) => a.concat(r), [])
     .map((step) => step?.ingredients)
@@ -66,6 +71,8 @@
   <title>{recipe.title}</title>
 </svelte:head>
 
+<!-- temp -->
+<input type="number" bind:value={nCooks} />
 <div class="h-recipe">
   <!-- TODO: configure number of workers -->
   <h1 class="p-name">{recipe.title}</h1>
@@ -105,6 +112,7 @@
   </div>
   <div>
     <h2>Instructions</h2>
+    <TimelineDag {workers} />
     <ol>
       {#each workeQueue.filter(Boolean) as step}
         <li>

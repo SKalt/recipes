@@ -89,15 +89,13 @@ enum TimeUnit {
   "day" = 1e3 * 60 * 60 * 24,
 }
 const _plural = (n: number, repr: string) => `${n} ${repr}${n != 1 ? "s" : ""}`;
-// const repr = (d: Date): string => {
-//   const n = Number(d);
-//   const _ = (u: TimeUnit, r: string) => _plural(n / u, r);
-//   if (n >= 0.5 * TimeUnit.day) return _(TimeUnit.day, "day");
-//   if (n >= 0.5 * TimeUnit.hour) return _(TimeUnit.hour, "hour");
-//   if (n >= 0.5 * TimeUnit.minute) return _(TimeUnit.minute, "minute");
-//   if (n >= 0.5 * TimeUnit.second) return _(TimeUnit.second, "second");
-//   throw new Error(`unexpected time interval: ${n}ms`);
-// };
+export const repr = (n: number): string => {
+  const _ = (u: TimeUnit, r: string) => _plural(n / u, r);
+  if (n >= 0.5 * TimeUnit.day) return _(TimeUnit.day, "day");
+  if (n >= 0.5 * TimeUnit.hour) return _(TimeUnit.hour, "hour");
+  if (n >= 0.5 * TimeUnit.minute) return _(TimeUnit.minute, "minute");
+  return _(TimeUnit.second, "second");
+};
 const _getTimeUnitMs = (unit: "days" | "hours" | "minutes" | "seconds") => {
   const _unit = {
     seconds: TimeUnit.second,
@@ -120,7 +118,9 @@ export class Duration implements IDuration {
     let u = this._getTimeUnit();
     let r = this.unit.replace(/s$/, "");
     let passive = this._passiveMs / u;
-    return _plural(n / u, r) + this._passiveMs ? ` (${passive} passive)` : "";
+    return `${_plural(n / u, r)}${
+      this._passiveMs ? ` (${passive} passive)` : ""
+    }`;
   }
   compare(other: Duration): -1 | 0 | 1 {
     if (this._ms == other._ms) return 0;
@@ -352,7 +352,7 @@ interface ITimeline {
   */
 }
 
-class Timeline implements ITimeline {
+export class Timeline implements ITimeline {
   workers: Step[];
   steps: { start: number; end: number; id: string }[];
   // validate() {
@@ -374,10 +374,11 @@ class Timeline implements ITimeline {
   //     throw new ValidationError(errors, `timeline for ${variation.id}`);
   // }
   constructor(
-    steps: Variation,
+    variation: Variation,
     workers: Step[][],
     pause: number = 5 * TimeUnit.second
   ) {
+    const { steps } = variation;
     // assert pause > 1000, i.e at least 1 second
     const done = new Set<Step>();
     const remaining = new Set(Object.keys(steps));
@@ -397,8 +398,8 @@ class Timeline implements ITimeline {
         step.end = step.end = step.start + step.duration._ms;
         time.set(queue, step.end + pause);
       });
+      workers = workers.filter((queue) => queue.length > 0);
     }
-    workers = workers.filter((queue) => queue.length > 0);
   }
 }
 
