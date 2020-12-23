@@ -324,7 +324,7 @@ export const toInstrs = (variation: Variation, nCooks: number) => {
       if (!accepted) return; // the other worker may have consumed the last task
       done.add(accepted.id);
       remaining.delete(accepted.id);
-      worker.push(accepted);
+      worker.unshift(accepted);
       candidates = candidates.concat(
         accepted.depends_on.filter((id) => !done.has(id)).map((id) => steps[id])
       );

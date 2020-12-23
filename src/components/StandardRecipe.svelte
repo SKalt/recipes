@@ -25,21 +25,20 @@
       recipe,
       new Duration({ measurement: 1, unit: "minutes" })
     );
-    variation = _recipe.default;
-    variant = _recipe.variations[variation];
+    if (!variation) variation = _recipe.default;
   }
+  $: variant = _recipe.variations[variation];
   // TODO: timeline
 
   $: workers = toInstrs(variant, nCooks);
   $: ingredients = workers
     .reduce((a, r) => a.concat(r), [])
-    .filter(Boolean)
     .map((step) => step?.ingredients)
     .reduce((a, r) => a.concat(r), []);
   $: {
     workeQueue = workers[player] || [];
   }
-  $: ingredients = workeQueue.filter(Boolean).reduce((a, step) => {
+  $: ingredients = workeQueue.reduce((a, step) => {
     return [...a, ...(step.ingredients || [])];
   }, []);
   $: kitchenware = workeQueue
