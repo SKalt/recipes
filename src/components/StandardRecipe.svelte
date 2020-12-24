@@ -23,6 +23,12 @@
   let workeQueue: Step[];
   let kitchenware: Array<string>;
   let timeline: Timeline;
+  const formatInstruction = (step: Step) =>
+    (step?.details || step?.id || "").slice(0, 1).toUpperCase() +
+    (step?.details || step?.id || "")
+      .slice(1)
+      .replace(/\s*\.?$/, ".")
+      .replace(/[.]{2}$/, ".");
   $: {
     _recipe = new Recipe(
       recipe,
@@ -120,14 +126,7 @@
     <!-- <TimelineDag {workers} /> -->
     <ol>
       {#each workeQueue.filter(Boolean) as step}
-        <li>
-          {(step?.details || step?.id || '')
-            .slice(0, 1)
-            .toUpperCase() + (step?.details || step?.id || '')
-              .slice(1)
-              .replace(/\s*\.?$/, '.')
-              .replace(/[.]{2}$/, '.')}
-        </li>
+        <li>{formatInstruction(step)}</li>
       {/each}
     </ol>
   </div>
