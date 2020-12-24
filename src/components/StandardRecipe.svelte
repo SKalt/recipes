@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TimelineDag from "./TimelineDag.svelte";
+  // import TimelineDag from "./TimelineDag.svelte";
   import type { IRecipe } from "../recipes/types";
   import {
     Recipe,
@@ -7,7 +7,7 @@
     Duration,
     Variation,
     Ingredient,
-    passiveFirst,
+    // passiveFirst,
     longestShortestPath,
     Timeline,
     sfx,
@@ -35,7 +35,11 @@
   $: workers = longestShortestPath(variant, nCooks);
   $: {
     timeline = new Timeline(variant, workers);
-    console.log(timeline, workers);
+    console.log(
+      workers.map((q) =>
+        q.map((s) => ({ id: s.id, start: s.start, end: s.end }))
+      )
+    );
   }
   $: ingredients = workers
     .reduce((a, r) => a.concat(r), [])
@@ -73,7 +77,7 @@
 </svelte:head>
 
 <!-- temp -->
-<input type="number" bind:value={nCooks} />
+<!-- <input type="number" bind:value={nCooks} /> -->
 <div class="h-recipe">
   <!-- TODO: configure number of workers -->
   <h1 class="p-name">{recipe.title}</h1>
@@ -113,13 +117,16 @@
   </div>
   <div>
     <h2>Instructions</h2>
-    <TimelineDag {workers} />
+    <!-- <TimelineDag {workers} /> -->
     <ol>
       {#each workeQueue.filter(Boolean) as step}
         <li>
           {(step?.details || step?.id || '')
-            .replace(/\s*\.?$/, '.')
-            .replace(/[.]{2}$/, '.')}
+            .slice(0, 1)
+            .toUpperCase() + (step?.details || step?.id || '')
+              .slice(1)
+              .replace(/\s*\.?$/, '.')
+              .replace(/[.]{2}$/, '.')}
         </li>
       {/each}
     </ol>

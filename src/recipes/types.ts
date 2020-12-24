@@ -89,7 +89,8 @@ enum TimeUnit {
   "day" = 1e3 * 60 * 60 * 24,
 }
 type AllowedTimeUnit = keyof typeof TimeUnit;
-const _plural = (n: number, repr: string) => `${n} ${repr}${n != 1 ? "s" : ""}`;
+const _plural = (n: number, repr: string) =>
+  `${n.toFixed(2)} ${repr}${n != 1 ? "s" : ""}`;
 
 export const repr = (n: number): string => {
   const units: AllowedTimeUnit[] = ["day", "hour", "minute"];
@@ -108,12 +109,8 @@ export class Duration implements IDuration {
   _passiveMs: number;
   _unit: TimeUnit;
   toString(): string {
-    let n = +this._ms;
-    let u = this._getTimeUnit();
-    let r = this.unit.replace(/s$/, "");
-    let passive = this._passiveMs / u;
-    return `${_plural(n / u, r)}${
-      this._passiveMs ? ` (${passive} passive)` : ""
+    return `${_plural(this.measurement, this.unit)}${
+      this.passive ? ` (${this.passive} passive)` : ""
     }`;
   }
   compare(other: Duration): -1 | 0 | 1 {
@@ -121,19 +118,12 @@ export class Duration implements IDuration {
     if (this._ms > other._ms) return 1;
     else return -1;
   }
-  _getTimeUnit(): TimeUnit {
-    if (this._unit) return this._unit;
-    return (this._unit = TimeUnit[this.unit]);
-  }
-  private _inMs(n: number): number {
-    return this._getTimeUnit() * n;
-  }
   constructor({ measurement, unit, passive = 0 }: IDuration) {
     this.measurement = measurement;
     this.unit = unit;
     this.passive = passive;
-    this._ms = this._inMs(measurement);
-    this._passiveMs = this._inMs(passive);
+    this._ms = TimeUnit[unit] * measurement;
+    this._passiveMs = TimeUnit[unit] * passive;
   }
 }
 
@@ -339,8 +329,8 @@ export const longestShortestPath: IPrioritizer = (variation, nCooks) => {
     a[id] = 0;
     return a;
   }, {});
-  const cost = (id: string) => costs[id] || 0;
 
+  const cost = (id: string) => costs[id] || 0;
   const walk = (cb: (current: string, prev: string) => void) => {
     let nodes = ["done"];
     while (nodes.length > 0) {
@@ -432,7 +422,7 @@ export class Timeline implements ITimeline {
           time.get(queue) || 0,
           ...step.depends_on.map((id) => (steps[id].end || 0) + pause)
         );
-        step.end = step.end = step.start + step.duration._ms;
+        step.end = step.start + step.duration._ms;
         time.set(queue, step.end + pause);
       });
       workers = workers.filter((queue) => queue.length > 0);

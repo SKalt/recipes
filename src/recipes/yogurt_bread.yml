@@ -44,7 +44,7 @@ variations:
             description: preferably non-iodized for the yeast's comfort
       "knead the dough":
         depends_on: ["combine the ingredients in a bowl"]
-      "let rise for 45 minute":
+      "let rise for 45 minutes":
         depends_on: ["knead the dough"]
         duration: { unit: minute, measurement: 45, passive: 45}
       "grease a breadpan":
@@ -53,9 +53,9 @@ variations:
         depends_on: ["grease a breadpan", "let rise for 45 minute"]
       "preheat the oven to 350F":
         kitchenware: [oven]
-      "bake at 350F for 40 minute":
+      "bake at 350F for 40 minutes":
         depends_on: ["place the dough in the breadpan", "preheat the oven to 350F"]
-      done: {depends_on: ["bake at 350F for 40 minute"]}
+      done: {depends_on: ["bake at 350F for 40 minutes"]}
   "bread machine":
     steps:
       "heat water": *heat-water

@@ -17,7 +17,7 @@ variations:
       "parboil the potatoes":
         details: |
           Place the pot on medium heat and bring to a boil.
-          Boil for 3 additional minute.
+          Boil for 3 additional minutes.
         duration: {measurement: 8, unit: minute, passive: 6}
         depends_on: ["cube the potatoes"]
         kitchenware: [stove, large pot]

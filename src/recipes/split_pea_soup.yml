@@ -24,7 +24,7 @@ variations:
             ingredient: carrots
       "chop the celery": &chop-celery
         kitchenware: [knife, cutting board]
-        details: Chop the celery widthwise into slices around .5 thick
+        details: Chop the celery widthwise into slices around .5cm thick
         ingredients:
           - measurement: 3
             unit: stalks
