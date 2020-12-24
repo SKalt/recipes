@@ -33,7 +33,28 @@ export default {
         "process.env.NODE_ENV": JSON.stringify(mode),
       }),
       svelte({
-        preprocess: sveltePreprocess(),
+        preprocess: sveltePreprocess({
+          babel: {
+            presets: [
+              [
+                "@babel/preset-env",
+                {
+                  loose: true,
+                  // No need for babel to resolve modules
+                  modules: false,
+                  targets: {
+                    // ! Very important. Target es6+
+                    esmodules: true,
+                    node: "12",
+                    // chrome: ">= 80",
+                    // firefox: ">= 74",
+                    // safari: ">= 12",
+                  },
+                },
+              ],
+            ],
+          },
+        }),
         compilerOptions: {
           dev,
           hydratable: true,
@@ -59,7 +80,7 @@ export default {
             [
               "@babel/preset-env",
               {
-                targets: "> 0.25%, not dead",
+                targets: "node 12, > 0.25%, not dead",
               },
             ],
           ],
