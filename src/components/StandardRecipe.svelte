@@ -7,7 +7,8 @@
     Duration,
     Variation,
     Ingredient,
-    toInstrs,
+    passiveFirst,
+    longestShortestPath,
     Timeline,
     sfx,
   } from "../recipes/types";
@@ -25,13 +26,13 @@
   $: {
     _recipe = new Recipe(
       recipe,
-      new Duration({ measurement: 1, unit: "minutes" })
+      new Duration({ measurement: 1, unit: "minute" })
     );
     if (!variation) variation = _recipe.default;
   }
   $: variant = _recipe.variations[variation];
 
-  $: workers = toInstrs(variant, nCooks);
+  $: workers = longestShortestPath(variant, nCooks);
   $: {
     timeline = new Timeline(variant, workers);
     console.log(timeline, workers);

@@ -44,18 +44,18 @@ variations:
             description: preferably non-iodized for the yeast's comfort
       "knead the dough":
         depends_on: ["combine the ingredients in a bowl"]
-      "let rise for 45 minutes":
+      "let rise for 45 minute":
         depends_on: ["knead the dough"]
-        duration: { unit: minutes, measurement: 45, passive: 45}
+        duration: { unit: minute, measurement: 45, passive: 45}
       "grease a breadpan":
         kitchenware: ['3"x9" breadpan']
       "place the dough in the breadpan": 
-        depends_on: ["grease a breadpan", "let rise for 45 minutes"]
+        depends_on: ["grease a breadpan", "let rise for 45 minute"]
       "preheat the oven to 350F":
         kitchenware: [oven]
-      "bake at 350F for 40 minutes":
+      "bake at 350F for 40 minute":
         depends_on: ["place the dough in the breadpan", "preheat the oven to 350F"]
-      done: {depends_on: ["bake at 350F for 40 minutes"]}
+      done: {depends_on: ["bake at 350F for 40 minute"]}
   "bread machine":
     steps:
       "heat water": *heat-water
@@ -68,5 +68,5 @@ variations:
       "hit the start button":
         depends_on: ["combine ingredients in the bread machine"]
         details: start a rapid-rise white cycle on your bread machine.
-        duration: {measurement: 3.5, unit: hours, passive: 3.5}
+        duration: {measurement: 3.5, unit: hour, passive: 3.5}
       done: {depends_on: ["hit the start button"]}

@@ -7,10 +7,10 @@ export interface IDuration {
   measurement: number;
   // min?: number;
   // max?: number;
-  unit: "days" | "hours" | "minutes" | "seconds";
+  unit: AllowedTimeUnit;
   passive?: number; // if missing, it's 0
 }
-// the default duration should be ~2 minutes, e.g. for chopping garlic.
+// the default duration should be ~2 minute, e.g. for chopping garlic.
 
 export interface IStep {
   details: string;
@@ -88,27 +88,21 @@ enum TimeUnit {
   "hour" = 1e3 * 60 * 60,
   "day" = 1e3 * 60 * 60 * 24,
 }
+type AllowedTimeUnit = keyof typeof TimeUnit;
 const _plural = (n: number, repr: string) => `${n} ${repr}${n != 1 ? "s" : ""}`;
+
 export const repr = (n: number): string => {
-  const _ = (u: TimeUnit, r: string) => _plural(n / u, r);
-  if (n >= 0.5 * TimeUnit.day) return _(TimeUnit.day, "day");
-  if (n >= 0.5 * TimeUnit.hour) return _(TimeUnit.hour, "hour");
-  if (n >= 0.5 * TimeUnit.minute) return _(TimeUnit.minute, "minute");
-  return _(TimeUnit.second, "second");
+  const units: AllowedTimeUnit[] = ["day", "hour", "minute"];
+  for (let i = 0; i < 3; i++) {
+    const u = units[i];
+    if (n >= 0.5 * TimeUnit[u]) return _plural(n / TimeUnit[u], u);
+  }
+  return _plural(n / TimeUnit.second, "second");
 };
-const _getTimeUnitMs = (unit: "days" | "hours" | "minutes" | "seconds") => {
-  const _unit = {
-    seconds: TimeUnit.second,
-    minutes: TimeUnit.minute,
-    hours: TimeUnit.hour,
-    days: TimeUnit.day,
-  }[unit];
-  if (!_unit) throw new Error(`unexpected time unit: ${unit}`);
-  return _unit;
-};
+
 export class Duration implements IDuration {
   measurement: number;
-  unit: "days" | "hours" | "minutes" | "seconds";
+  unit: AllowedTimeUnit;
   passive: number;
   _ms: number;
   _passiveMs: number;
@@ -129,7 +123,7 @@ export class Duration implements IDuration {
   }
   _getTimeUnit(): TimeUnit {
     if (this._unit) return this._unit;
-    return (this._unit = _getTimeUnitMs(this.unit));
+    return (this._unit = TimeUnit[this.unit]);
   }
   private _inMs(n: number): number {
     return this._getTimeUnit() * n;
@@ -213,7 +207,7 @@ class Steps implements ISteps {
     });
   }
 }
-const _defaultDuration = new Duration({ measurement: 1, unit: "minutes" });
+const _defaultDuration = new Duration({ measurement: 1, unit: "minute" });
 const _defaultVariation: IVariation = {
   steps: {
     done: {
@@ -296,14 +290,20 @@ export const sfx = <T>(t: T, cb: (t: T) => void = console.log) => {
   cb(t);
   return t;
 };
-export const toInstrs = (variation: Variation, nCooks: number) => {
-  const steps =
-    variation?.steps || new Steps(_defaultVariation.steps, _defaultDuration);
-  const workers: Array<Array<Step>> = Array(nCooks)
+
+type IPrioritizer = (v: Variation, nCooks: number) => Step[][];
+
+const makeWorkers: IPrioritizer = (variation, nCooks) => {
+  const workers = Array(nCooks)
     .fill(0)
-    .map(() => []);
+    .map(() => [] as Step[]);
+  return workers;
+};
+
+export const passiveFirst: IPrioritizer = (variation, nCooks) => {
+  const { steps } = variation;
+  const workers: Array<Array<Step>> = makeWorkers(variation, nCooks);
   // initialize
-  workers[0] = [steps?.done];
   const remaining = new Set(Object.keys(steps));
   remaining.delete("done");
   const done = new Set("done");
@@ -333,10 +333,47 @@ export const toInstrs = (variation: Variation, nCooks: number) => {
   return workers;
 };
 
+export const longestShortestPath: IPrioritizer = (variation, nCooks) => {
+  const { steps } = variation;
+  const costs = Object.keys(steps).reduce((a: Record<string, number>, id) => {
+    a[id] = 0;
+    return a;
+  }, {});
+  const cost = (id: string) => costs[id] || 0;
+
+  const walk = (cb: (current: string, prev: string) => void) => {
+    let nodes = ["done"];
+    while (nodes.length > 0) {
+      const current = nodes.pop();
+      if (!current) throw new Error(`unexpectedly lacking any dependencies`);
+      const step = steps[current];
+      const ancestors = step.depends_on || [];
+      ancestors.forEach((prev) => cb(current, prev));
+      nodes = nodes.concat(ancestors.filter((n) => !nodes.includes(n)));
+    }
+  };
+  walk((current, prev) => {
+    const duration = steps[prev].duration._ms;
+    costs[prev] = Math.max(cost(prev), cost(current) + duration);
+  });
+  const workers = makeWorkers(variation, nCooks);
+  const priority = Object.entries(costs)
+    .sort((a, b) => a[1] - b[1]) // ascending cost => descending priority
+    .map(([id]) => id);
+  while (priority.length > 0) {
+    for (let worker of workers) {
+      const next = priority.pop();
+      if (!next) break;
+      worker.push(steps[next]);
+    }
+  }
+  return workers;
+};
+
 interface ITimelineStep {
   id: string; // references the step Varation.Steps[id]
-  start: number; // milliseconds since start
-  end: number; // milliseconds since start
+  start: number; // millisecond since start
+  end: number; // millisecond since start
 }
 
 interface ITimeline {
@@ -402,5 +439,3 @@ export class Timeline implements ITimeline {
     }
   }
 }
-
-const instrsToTimeline = () => {};

@@ -69,7 +69,7 @@ variations:
         details: "Simmer for up to an hour, stirring occasionally."
         depends_on: ["combine the ingredients in a large pot"]
         kitchenware: ["stovetop burner"]
-        duration: { measurement: 1, unit: hours}
+        duration: { measurement: 1, unit: hour}
       done: {depends_on: ["simmer for up to an hour"]}
   "instant pot":
     steps:
@@ -83,7 +83,7 @@ variations:
         kitchenware: ["instant pot"]
       "combine the ingredients in the instant pot": *combine
       "run the bean/chili program":
-        duration: {measurement: 45, unit: minutes, passive: 44}
+        duration: {measurement: 45, unit: minute, passive: 44}
         kitchenware: ["instant pot"]
         depends_on: ["combine the ingredients in the instant pot"]
       done: {depends_on: ["run the bean/chili program"]}
