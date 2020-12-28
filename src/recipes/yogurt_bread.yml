@@ -50,7 +50,7 @@ variations:
       "grease a breadpan":
         kitchenware: ['3"x9" breadpan']
       "place the dough in the breadpan": 
-        depends_on: ["grease a breadpan", "let rise for 45 minute"]
+        depends_on: ["grease a breadpan", "let rise for 45 minutes"]
       "preheat the oven to 350F":
         kitchenware: [oven]
       "bake at 350F for 40 minutes":
