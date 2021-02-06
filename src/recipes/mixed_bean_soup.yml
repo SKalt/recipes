@@ -35,10 +35,6 @@ variations:
       "fry the bacon":
         details: Fry the .25 pounds of bacon in the saucepan.
         kitchenware: [4-quart saucepan]
-        ingredients:
-          - measurement: .25
-            unit: pounds
-            ingredient: bacon
         depends_on: [drain the beans, chop the bacon]
       "chop the carrot and garlic":
         details: Peel and chop 1 large carrot and 1 clove garlic.
