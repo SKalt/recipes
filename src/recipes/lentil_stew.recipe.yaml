@@ -1,0 +1,55 @@
+title: Lentil stew
+default: "stovetop"
+variations:
+  "stovetop":
+    steps:
+      "rinse lentils":
+        details: Rinse and drain the lentils.
+        duration: { unit: minutes, measurement: 2 }
+        kitchenware: [sieve]
+        ingredients:
+          - measurement: 1
+            unit: cups
+            ingredient: dry lentils
+      "dice vegetables":
+        details:  "dice the onion and pepper"
+        ingredients: 
+          - measurement: 1
+            unit: medium
+            ingredient: onion
+          - measurement: 1
+            unit: fresh
+            ingredient: bell pepper
+        kitchenware:
+          - cutting board
+          - knife
+      "sauté vegetables":
+        duration: { unit: minutes, measurement: 5, passive: 3 }
+        details: |
+          Heat the butter or oil in a medium skillet.
+          Sauté the diced onion and pepper until soft and browned.
+        depends_on: ["dice vegetables"]
+        ingredients:
+          - measurement: 4
+            unit: Tbsp
+            ingredient: butter or oil
+        kitchenware: ["skillet"]
+      "combine and simmer":
+        duration: { unit: minutes, measurement: 45, passive: 30}
+        depends_on:
+          - sauté vegetables
+          - "rinse lentils"
+        details: |
+          Add 6 cups boiling water, the rinsed lentils, 3oz canned pimentos, and the diced tomatoes to the skillet.
+          Let simmer for 45 minutes, stirring occasionally.
+        ingredients:
+          - measurement: 6
+            unit: cups
+            ingredient: boiling water
+          - measurement: 3
+            unit: oz
+            ingredient: canned pimentos
+          - measurement: 2
+            ingredient: diced tomatoes
+            unit: cups
+      done: {depends_on: ["combine and simmer"]}

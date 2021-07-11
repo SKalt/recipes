@@ -5,6 +5,7 @@
     "mixed_bean_soup",
     "pesto",
     "yogurt_bread",
+    "lentil_stew",
   ].map((slug) => ({
     slug,
     title: slug[0].toUpperCase() + slug.slice(1).replace("_", " "),

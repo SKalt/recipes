@@ -4,3 +4,4 @@
 .vercel
 build
 .pnpm-debug.log
+.svelte-kit
