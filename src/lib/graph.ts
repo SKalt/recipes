@@ -1,22 +1,23 @@
-import type { Ingredient, Recipe, Variation } from "../recipes/types";
-export const asD3Dag = (v: Variation) => {
-  if (!v) return [];
-  return Object.entries(v).map(([id, instr]) => ({
+import type { Ingredient, Recipe, IVariation } from "../recipes/types";
+export const asD3Dag = (variant?: IVariation) => {
+  if (!variant) return [];
+  const steps = variant.steps;
+  return Object.entries(steps).map(([id, instr]) => ({
     id,
     parentIds:
-      instr.depends_on?.map((d) => {
-        if (!v[d])
+      instr.depends_on?.map((dep) => {
+        if (!steps[dep])
           throw new Error(
-            `missing '${d}' from ${Object.keys(v)
+            `missing '${dep}' from ${Object.keys(steps)
               .map((id) => `'${id}'`)
               .join()}`
           );
-        return d;
+        return dep;
       }) || [],
   }));
 };
 
-const getIngredients = (v: Variation) => {
+const getIngredients = (v: IVariation) => {
   return Object.entries(v)
     .filter(([id, i]) => Boolean(i.ingredients?.length))
     .map(([id, i]) => i.ingredients)

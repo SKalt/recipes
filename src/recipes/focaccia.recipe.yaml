@@ -1,0 +1,90 @@
+title: focaccia
+default: default
+variations:
+  default:
+    steps:
+      "heat water":
+        details: |
+          Heat the water to 100-115 degrees Farenheight. 
+        ingredients:
+          - ingredient: water
+            unit: ml
+            measurement: 335
+        duration: {measurement: 5, unit: minute, passive: 4}
+      "prove yeast":
+        details: mix a spoonful of flour into the warm water along with 9 grams of yeast. Let it sit for 5-10 minutes.
+        ingredients:
+          - ingredient: "instant yeast"
+            unit: gram
+            measurement: 9
+          - ingredient: bread flour
+            unit: spoonful
+            measurement: 1
+        duration: {measurement: 8, unit: minute, passive: 7}
+        depends_on: [heat water]
+      "measure dry ingredients into a bowl":
+        details: Measure 450 grams of flour into a bowl along with 9 grmas of salt.
+        ingredients:
+          - ingredient: bread flour
+            unit: gram
+            measurement: 450
+          - ingredient: salt
+            unit: gram
+            measurement: 9
+      "mix in yeast":
+        details: pour the yeast mixture into the dry ingredients. Mix until no dry ingredients remain.
+        depends_on: ["measure dry ingredients into a bowl", "prove yeast"]
+      "mix in olive oil":
+        #ingredients: - measurement: 9 unit: gram ingredient: olive oil
+      "let rise":
+        # details: cover and let rise in a warm place for 20 minutes 
+        # duration: {measurement: 20, unit: minute}
+      "stretch+fold 1": &stretch_and_fold
+        details: |
+          Wet your hands to prevent sticking. Grab one corner of the dough. Stretch it as high as you can without tearing, then fold it over to the other side. Repeat for each of the four (imaginary) corners of the dough. Finally, recover and let rest for 30 minutes. 
+        duration: {measurement: 35, unit: minute, passive: 30}
+        depends_on: [let rise]  
+      "stretch+fold 2":
+        <<: *stretch_and_fold
+        depends_on: ["stretch and fold 1"]
+      "stretch+fold 3":
+        <<: *stretch_and_fold
+        depends_on: ["stretch and fold 2"]
+      "stretch+fold 4":
+        details: Wet your hands to prevent sticking. Grab one corner of the dough. Stretch it as high as you can without tearing, then fold it over to the other side. Repeat for each of the four (imaginary) corners of the dough. 
+        duration: {measurement: 5, unit: minute}
+        depends_on: ["stretch and fold 3"]
+      "grease pan":
+        details: "Drizzle the pan with olive oil."
+        kitchenware: ['9-inch by 13-inch baking pan']
+        ingredients:
+          - ingredient: olive oil
+            unit: giant dose
+            measurement: 1
+      "put dough in pan":
+        details: "Turn the dough onto the pan. Flip the dough to ensure it's covered with oil.  Stretch the dough to the corners of the pan. If neccessary, let the dough rest for 10 minutes and retry. Either way, let rise for 10 more minutes."
+        depends_on: [stretch+fold 4, grease pan]
+      "dimple the bread":
+        details: Wet your hands to prevent sticking. Press your fingers almost through the bread to create dimples. 
+      "mix water and oil":
+        details: Emulsify water and oil; pour over dimpled dough.
+        ingredients:
+          - ingredient: olive oil
+            measurement: 20
+            unit: gram
+          - ingredient: water
+            measurement: 20
+            unit: gram
+        depends_on: [diple the bread]
+        kitchenware: [medium bowl]
+      "sprinkle with rosemary and salt":
+        ingredients:
+          - ingredient: rosemary
+            unit:
+            measurement:
+          - ingredient: salt
+            unit:
+            measurement:
+      "preheat oven to 450 F":
+      "bake for 25m":
+        duration: {measurement: 25, unit: minute, passive: 24}

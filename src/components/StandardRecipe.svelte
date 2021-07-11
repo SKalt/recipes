@@ -41,11 +41,11 @@
   $: workers = longestShortestPath(variant, nCooks);
   $: {
     timeline = new Timeline(variant, workers);
-    console.log(
-      workers.map((q) =>
-        q.map((s) => ({ id: s.id, start: s.start, end: s.end }))
-      )
-    );
+    // console.log(
+    //   workers.map((q) =>
+    //     q.map((s) => ({ id: s.id, start: s.start, end: s.end }))
+    //   )
+    // );
   }
   $: ingredients = workers
     .reduce((a, r) => a.concat(r), [])
@@ -70,13 +70,6 @@
   // TODO: add a cleanup step for each ingredient and item of kitchenware
   // TODO: ensure no item of kitchenware is being used by more than one worker at a time
 </script>
-
-<style>
-  ul {
-    list-style-type: none;
-    padding-left: 1em;
-  }
-</style>
 
 <svelte:head>
   <title>{recipe.title}</title>
@@ -131,3 +124,10 @@
     </ol>
   </div>
 </div>
+
+<style>
+  ul {
+    list-style-type: none;
+    padding-left: 1em;
+  }
+</style>
