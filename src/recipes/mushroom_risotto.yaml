@@ -1,0 +1,95 @@
+title: 'Mushroom risotto'
+default: "Instant pot"
+variations:
+  "Instant pot":
+    steps:
+      "dice onion":
+        duration: {measurement: 4, unit: minute}
+        ingredients:
+          - ingredient: onion
+            measurement: 1
+            unit: medium
+        kitchenware: [knife, cutting board]
+      "crush garlic":
+        details: |
+          Shell the garlic by crushing it against a flat surface with the palm
+          of your hand or the flat of a knife. Use the garlic press to crush the
+          shelled garlic.
+        kitchenware: [knife, garlic press, cutting board]
+        ingredients:
+          - ingredient: garlic
+            unit: clove
+            measurement: 3
+        duration: {measurement: 3, unit: minute}
+      "sautee garlic":
+        details: |
+          Add the crushed garlic to the instant pot. Sautee for 2 minutes.
+        kitchenware: [instant pot]
+        duration: {measurement: 2, unit: minute, passive: 1}
+        depends_on: [crush garlic, sautee onions]
+      "sautee onions":
+        details: |
+          Set your instant pot to sautee. Melt 2 Tbsp of butter. Add the diced
+          onions and stir occasionally until the onions are translucent.
+        duration: {measurement: 5, unit: minute, passive: 4}
+        depends_on: ["dice onion"]
+        kitchenware: ["instant pot"]
+        ingredients: &butter
+          - ingredient: unsalted butter
+            unit: Tbsp
+            measurement: 2
+      "slice mushrooms":
+        duration: {measurement: 5, unit: minute}
+        details: |
+            Wash then thinly slice the mushrooms.
+        ingredients:
+          - ingredient: cremini mushrooms
+            unit: ounce
+            measurement: 8
+        kitchenware: [knife, sink, cutting board]
+      "cook mushrooms":
+        details: |
+          Add the remaining butter. Add the sliced mushrooms to the instant pot. Cook until tender, around 4 minutes. Stir occasionally.
+        duration: {measurement: 5, unit: minute, passive: 4}
+        kitchenware: [instant pot]
+        depends_on: [slice mushrooms, sautee garlic]
+        ingredients: *butter
+      "stir in rice, thyme, and broth":
+        depends_on: [cook mushrooms]
+        details: |
+          Stir in 1 cup arborio rice, 2 cups of chicken broth, and 1/4 tsp thyme.
+        duration: {measurement: 20, unit: minute, passive: 17}
+        kitchenware: [instant pot]
+        ingredients:
+          - ingredient: arborio rice
+            measurement: 1
+            unit: cup
+          - ingredient: thyme
+            measurement: .25
+            unit: tsp
+          - ingredient: chicken broth
+            measurement: 2
+            unit: cup
+      "pressure cook":
+        depends_on: ["stir in rice, thyme, and broth"]
+        details: |
+          Set your instant pot to the rice setting or high pressure.
+        kitchenware: [instant pot]
+      "grate parmesan":
+        details: |
+          Grate .25 cups of parmesan cheese.
+        duration: {measurement: 5, unit: minute}
+      "stir in vegetables and cheese":
+        depends_on: [grate parmesan, pressure cook]
+        details: |
+          Stir in 2 cups of spinach, .75 cups of frozen peas, and .25 cups of
+          parmesan until the spinach wilts and the parmesan melts.
+        duration: {measurement: 4, unit: minutes}
+        ingredients:
+          - ingredient: spinach
+            measurement: 2
+            unit: cups
+          - ingredient: thawed peas
+            measurement: .75
+            unit: cup
+      done: {depends_on: ["stir in vegetables and cheese"]}
