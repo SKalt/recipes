@@ -94,14 +94,14 @@
   <div>
     <h2>Ingredients</h2>
     <ul>
-      {#each ingredients as ingredient}
+      {#each ingredients as ingredient, index}
         <li class="p-ingredient">
-          <input type="checkbox" />
-          <span>
+          <input id="ingredient-{index}" type="checkbox" />
+          <label for="ingredient-{index}">
             {ingredient.measurement}
             {ingredient.unit}
             {ingredient.ingredient}
-          </span>
+          </label>
         </li>
       {/each}
     </ul>
@@ -109,8 +109,11 @@
   <div>
     <h2>Required kitchenware</h2>
     <ul>
-      {#each kitchenware as item}
-        <li><input type="checkbox" /> <span>{item}</span></li>
+      {#each kitchenware as tool, index}
+        <li>
+          <input type="checkbox" id="kitchenware-{index}" />
+          <label for="kitchenware-{index}">{tool}</label>
+        </li>
       {/each}
     </ul>
   </div>
@@ -129,5 +132,9 @@
   ul {
     list-style-type: none;
     padding-left: 1em;
+  }
+  input[type="checkbox"],
+  label[for] {
+    cursor: pointer;
   }
 </style>

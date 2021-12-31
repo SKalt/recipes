@@ -38,7 +38,7 @@ variations:
         duration: { unit: minutes, measurement: 45, passive: 30}
         depends_on:
           - sauté vegetables
-          - "rinse lentils"
+          - rinse lentils
         details: |
           Add 6 cups boiling water, the rinsed lentils, 3oz canned pimentos, and the diced tomatoes to the skillet.
           Let simmer for 45 minutes, stirring occasionally.

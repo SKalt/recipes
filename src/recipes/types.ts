@@ -332,7 +332,7 @@ export const longestShortestPath: IPrioritizer = (variation, nCooks) => {
 
   const cost = (id: string) => costs[id] || 0;
   const walk = (cb: (current: string, prev: string) => void) => {
-    let nodes = ["done"];
+    let nodes = ["done"]; // start at the end
     while (nodes.length > 0) {
       const current = nodes.pop();
       if (!current) throw new Error(`unexpectedly lacking any dependencies`);
@@ -407,8 +407,6 @@ export class Timeline implements ITimeline {
   ) {
     const { steps } = variation;
     // assert pause > 1000, i.e at least 1 second
-    const done = new Set<Step>();
-    const remaining = new Set(Object.keys(steps));
     // clone the Array<Array> for mutation and consumption by this function
     workers = [...workers.map((queue) => [...queue])];
     const time = new Map(workers.map((queue) => [queue, 0]));

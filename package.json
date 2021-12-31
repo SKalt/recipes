@@ -7,7 +7,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "svelte-kit dev --open",
+    "dev": "svelte-kit dev --host --open",
     "build": "svelte-kit build",
     "export": "svelte-kit build",
     "validate": "svelte-check"
