@@ -1,10 +1,18 @@
 <script lang="ts">
-  throw new Error("@migration task: Add data prop (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292707)");
+  throw new Error(
+    "@migration task: Add data prop (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292707)"
+  );
 
   import Nav from "../components/Nav.svelte";
-
-  export let segment: string;
+  import type { PageData } from "./$types";
+  export let data: PageData;
 </script>
+
+<Nav segment={data.segment} />
+
+<main>
+  <slot />
+</main>
 
 <style>
   /* TODO: dark mode via a css variable + @media(prefers-color-scheme: dark) {} */
@@ -26,9 +34,3 @@
     }
   }
 </style>
-
-<Nav {segment} />
-
-<main>
-  <slot />
-</main>
