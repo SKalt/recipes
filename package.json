@@ -7,36 +7,31 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "svelte-kit dev --host --open",
-    "build": "svelte-kit build",
-    "export": "svelte-kit build",
+    "dev": "vite dev --host --open",
+    "build": "vite build",
+    "export": "vite build",
     "validate": "svelte-check"
   },
   "browserslist": [
-    "node 14",
+    "node 16",
     "> 2%",
     "not IE"
   ],
   "devDependencies": {
-    "@babel/core": "^7.14.6",
-    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/plugin-transform-runtime": "^7.14.5",
-    "@babel/preset-env": "^7.14.7",
-    "@babel/runtime": "^7.14.6",
     "@rollup/plugin-yaml": "^3.0.0",
     "@sveltejs/adapter-static": "^1.0.0-next.13",
     "@sveltejs/adapter-vercel": "next",
-    "@sveltejs/kit": "^1.0.0-next.124",
+    "@sveltejs/kit": "1.0.0-next.428",
     "@tsconfig/svelte": "^1.0.13",
     "prettier": "^2.3.2",
-    "rollup": "^2.53.1",
-    "rollup-plugin-svelte": "^7.1.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "svelte": "^3.38.3",
+    "svelte": "^3.44.0",
     "svelte-check": "^1.6.0",
     "svelte-preprocess": "^4.7.4",
     "tslib": "^2.3.0",
     "typescript": "^4.3.5",
     "vercel": "^21.3.3"
+  },
+  "dependencies": {
+    "vite": "^3.0.0"
   }
 }
